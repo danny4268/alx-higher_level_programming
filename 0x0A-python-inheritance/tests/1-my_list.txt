@@ -1,55 +1,49 @@
-The ``1-my_list`` module
-========================
+Prints the list, but sorted in ascending sort
+=============================================
+the class inherits from list
 
-Using ``MyList``
-----------------
+assumes all given values are of type int
 
-This is an example text file in reStructuredText format.  First import
-``MyList`` from the ``1-my_list`` module:
+    >>> MyList = __import__('1-my_list').MyList
 
->>> MyList = __import__('1-my_list').MyList
+    basic list
 
-Now use it:
+    >>> my_list = MyList([1, 4, 2, 3, 5])
+    >>> my_list.print_sorted()
+    [1, 2, 3, 4, 5]
 
->>> my_list = MyList()
->>> my_list.append(1)
->>> my_list.append(4)
->>> my_list.append(2)
->>> my_list.append(3)
->>> my_list.append(5)
->>> print(my_list)
-[1, 4, 2, 3, 5]
+    empty list
 
->>> my_list.print_sorted()
-[1, 2, 3, 4, 5]
+    >>> my_list = MyList([])
+    >>> my_list.print_sorted()
+    []
 
->>> print(my_list)
-[1, 4, 2, 3, 5]
+    list with one element
 
->>> my_list = MyList("python is cool")
->>> my_list.print_sorted()
-[' ', ' ', 'c', 'h', 'i', 'l', 'n', 'o', 'o', 'o', 'p', 's', 't', 'y']
+    >>> my_list = MyList([9])
+    >>> my_list.print_sorted()
+    [9]
 
->>> print(my_list)
-['p', 'y', 't', 'h', 'o', 'n', ' ', 'i', 's', ' ', 'c', 'o', 'o', 'l']
+    first element larger
 
->>> my_list = MyList([4, 6, 2, 9, 2, 5, 0])
->>> my_list.print_sorted()
-[0, 2, 2, 4, 5, 6, 9]
+    >>> my_list = MyList([9, 4, 2, 3, 5])
+    >>> my_list.print_sorted()
+    [2, 3, 4, 5, 9]
 
->>> print(my_list)
-[4, 6, 2, 9, 2, 5, 0]
+    Non-integer elements
 
->>> my_list.print_sorted() == my_list
-[0, 2, 2, 4, 5, 6, 9]
-False
+    >>> my_list = MyList(['one', 'three', 'two'])
+    >>> my_list.print_sorted()
+    ['one', 'three', 'two']
 
->>> my_list = MyList()
->>> print(my_list)
-[]
+    No arguments supplied
 
->>> my_list.append(-11)
->>> my_list.append(-10)
->>> my_list.append(5)
->>> my_list.print_sorted()
-[-11, -10, 5]
+    >>> my_list = MyList()
+    >>> my_list.print_sorted()
+    []
+
+    list has a string
+
+    >>> MyList.print_sorted([1, 4, 2, 3, "5"])
+    Traceback (most recent call last):
+    TypeError: '<' not supported between instances of 'str' and 'int'
