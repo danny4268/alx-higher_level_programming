@@ -1,134 +1,47 @@
-# Python - Almost a circle
+# 0x0C. Python - Almost a circle
+ Foundations - Higher-level programming ― Python
+ 
+## Requirements
+...........................
+      Python Scripts
+...........................
 
-In this project, I encapsulated skills in Python object-oriented programming
-by coding three connected classes to represent rectangles and squares. I wrote my
-own test suite using the `unittest` module to test all functionality for each
-class.
+* Allowed editors: vi, vim, emacs
+* All your files will be interpreted/compiled on Ubuntu 14.04 LTS using python3 (version 3.4.3)
+* All your files should end with a new line
+* The first line of all your files should be exactly #!/usr/bin/python3
+* A README.md file, at the root of the folder of the project, is mandatory
+* Your code should use the PEP 8 style (version 1.7.*)
+* All your files must be executable
+* The length of your files will be tested using wc
+* All your modules should be documented: python3 -c 'print(__import__("my_module").__doc__)'
+* All your classes should be documented: python3 -c 'print(__import__("my_module").MyClass.__doc__)'
+* All your functions (inside and outside a class) should be documented: python3 -c 'print(__import__("my_module").my_function.__doc__)' and python3 -c 'print(__import__("my_module").MyClass.my_function.__doc__)'
+* A documentation is not a simple word, it’s a real sentence explaining what’s the purpose of the module, class or method (the length of it will be verified)
 
-The three classes involved utilizing the following Python tools:
-* Import
-* Exceptions
-* Private attributes
-* Getter/setter
-* Class/static methods
-* Inheritance
-* File I/O
-* `args`/`kwargs`
-* JSON and CSV serialization/deserialization
-* Unittesting
+All your files, classes and methods must be unit tested and be PEP 8 validated.
 
-## Tests :heavy_check_mark:
+> python3 -m unittest discover tests 
 
-* [tests/test_models](./tests/test_models): Folder containing the following
-independently-developed test files:
-  * [test_base.py](./tests/test_models/test_base.py)
-  * [test_rectangle.py](./tests/test_models/test_rectangle.py)
-  * [test_square.py](./tests/test_models/test_square.py)
+## 0. If it's not tested it doesn't work  [  ]
 
-## Classes :cl:
 
-### Base
-Represents the "base" class for all other classes in the project. Includes:
+## 9. Update #1  [ models/rectangle.py ]
 
-* Private class attribute `__nb_objects = 0`.
-* Public instance attribute `id`.
-* Class constructor `def __init__(self, id=None):`
-  * If `id` is `None`, increments `__nb_objects` and assigns its value to the
-  public instance attribute `id`.
-  * Otherwise, sets the public instance attribute `id` to the provided `id`.
-* Static method `def to_json_string(list_dictionaries):` that returns the JSON
-string serialization of a list of dictionaries.
-  * If `list_dictionaries` is `None` or empty, returns the string `"[]"`.
-* Class method `def save_to_file(cls, list_objs):` that writes the JSON
-serialization of a list of objects to a file.
-  * The parameter `list_objs` is expected to be a list of `Base`-inherited
-  instances.
-  * If `list_objs` is `None`, the function saves an empty list.
-  * The file is saved with the name `<cls name>.json` (ie. `Rectangle.json`)
-  * Overwrites the file if it already exists.
-* Static method `def from_json_string(json_string):` that returns a list of
-objects deserialized from a JSON string.
-  * The parameter `json_string` is expected to be a string representing a
-  list of dictionaries.
-  * If `json_string` is `None` or empty, the function returns an empty list.
-* Class method `def create(cls, **dictionary):` that instantiates an object with
-provided attributes.
-  * Instantiates an object with the attributes given in `**dictionary`.
-* Class method `def load_from_file(cls):` that returns a list of objects
-instantiated from a JSON file.
-  * Reads from the JSON file `<cls name>.json` (ie. `Rectangle.json`)
-  * If the file does not exist, the function returns an empty list.
-* Class method `def save_to_file_csv(cls, list_objs):` that writes the CSV
-serialization of a list of objects to a file.
-  * The parameter `list_objs` is expected to be a list of `Base`-inherited
-  instances.
-  * If `list_objs` is `None`, the function saves an empty list.
-  * The file is saved with the name `<cls name>.csv` (ie. `Rectangle.csv`)
-  * Serializes objects in the format `<id>,<width>,<height>,<x>,<y>` for
-  `Rectangle` objects and `<id>,<size>,<x>,<y>` for `Square` objects.
-* Class method `def load_from_file_csv(cls):` that returns a list of objects
-instantiated from a CSV file.
-  * Reads from the CSV file `<cls name>.csv` (ie. `Rectangle.csv`)
-  * If the file does not exist, the function returns an empty list.
-* Static method `def draw(list_rectangles, list_squares):` that draws
-`Rectangle` and `Square` instances in a GUI window using the `turtle` module.
-  * The parameter `list_rectangles` is expected to be a list of `Rectangle`
-  objects to print.
-  * The parameter `list_squares` is expected to be a list of `Square` objects
-  to print.
+  Update the class Rectangle by updating the public method [ def update(self, *args): ] by changing the prototype to [ update(self, *args, **kwargs) ] that assigns a key/value argument to attributes:
 
-### Rectangle
+  * [**kwargs] can be thought of as a double pointer to a dictionary: key/value
+  + As Python doesn’t have pointers, **kwargs is not literally a double pointer – describing it as such is just a way of explaining its behavior in terms you’re already familiar with
+  * [**kwargs] must be skipped if [*args] exists and is not empty
+  * Each key in this dictionary represents an attribute to the instance
+  + This type of argument is called a “key-worded argument”. Argument order is not important
 
-Represents a rectangle. Inherits from `Base` with:
+## 10. And now, the Square!  []
 
-* Private instance attributes `__width`, `__height`, `__x`, and `__y`.
-  * Each private instance attribute features its own getter/setter.
-* Class constructor `def __init__(self, width, height, x=0, y=0, id=None):`
-  * If either of `width`, `height`, `x`, or `y` is not an integer, raises a
-  `TypeError` exception with the message `<attribute> must be an integer`.
-  * If either of `width` or `height` is >= 0, raises a `ValueError` exception
-  with the message `<attribute> must be > 0`.
-  * If either of `x` or `y` is less than 0, raises a `ValueError` exception
-  with the message `<attribute> must be >= 0`.
-* Public method `def area(self):` that returns the area of the `Rectangle`
-instance.
-* Public method `def display(self):` that prints the `Rectangle` instance to
-`stdout` using the `#` character.
-  * Prints new lines for the `y` coordinate and spaces for the `x` coordinate.
-* Overwrite of `__str__` method to print a `Rectangle` instance in the format
-`[Rectangle] (<id>) <x>/<y>`.
-* Public method `def update(self, *args, **kwargs):` that updates an instance
-of a `Rectangle` with the given attributes.
-  * `*args` must be supplied in the following order:
-    * 1st: `id`
-    * 2nd: `width`
-    * 3rd: `height`
-    * 4th: `x`
-    * 5th: `y`
-  * `**kwargs` is expected to be a double pointer to a dictionary of new
-  key/value attributes to update the `Rectangle` with.
-  * `**kwargs` is skipped if `*args` exists.
-* Public method `def to_dictionary(self):` that returns the dictionary
-representation of a `Rectangle` instance.
+## 15. Dictionary to JSON string
+  JSON is one of the standard formats for sharing data representation.
+  Update the class Base by adding the static method [ def to_json_string(list_dictionaries): ] that returns the JSON string representation of list_dictionaries:
+  * list_dictionaries is a list of dictionaries
+  * If list_dictionaries is None or empty, return the string: "[]"
+  * Otherwise, return the JSON string representation of list_dictionaries
 
-### Square
-
-Represents a square. Inherits from `Rectangle` with:
-
-* Class constructor `def __init__(self, size, x=0, y=0, id=None):`
-  * The `width` and `height` of the `Rectangle` superclass are assigned using
-  the value of `size`.
-* Overwrite of `__str__` method to print a `Square` instance in the format
-`[Square] (<id>) <x>/<y>`.
-* Public method `def update(self, *args, **kwargs):` that updates an instance
-of a `Square` with the given attributes.
-  * `*args` must be supplied in the following order:
-    * 1st: `id`
-    * 2nd: `size`
-    * 3rd: `x`
-    * 4th: `y`
-  * `**kwargs` is expected to be a double pointer to a dictoinary of new
-  key/value attributes to update the `Square` with.
-  * `**kwargs` is skipped if `*args` exists.
-* Public method `def to_dictionary(self):` that returns the dictionary
-representation of a `Square`.

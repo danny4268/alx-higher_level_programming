@@ -1,19 +1,15 @@
 #!/usr/bin/python3
-"""
-Module base
-"""
-import json
+""" module that defines a class Base """
+from json import dumps, loads
 import csv
-import turtle
-import random
 
 
 class Base:
-    """class"""
+    """ class Base definition """
     __nb_objects = 0
 
     def __init__(self, id=None):
-        """ check inputs """
+        """ class Base object Constructor"""
         if id is not None:
             self.id = id
         else:
@@ -22,112 +18,107 @@ class Base:
 
     @staticmethod
     def to_json_string(list_dictionaries):
-        """ check inputs """
-        if list_dictionaries is None or len(list_dictionaries) == 0:
+        """ returns the JSON string repr of list_dictionaries """
+        if not list_dictionaries or list_dictionaries is None:
             return "[]"
-        return json.dumps(list_dictionaries)
+        else:
+            return dumps(list_dictionaries)
 
     @classmethod
     def save_to_file(cls, list_objs):
-        """ check inputs """
-        with open(cls.__name__ + ".json", mode="w") as j_file:
-            if list_objs is not None:
-                list_dict = [item.to_dictionary() for item in list_objs]
-                j_file.write(cls.to_json_string(list_dict))
-            else:
-                j_file.write(cls.to_json_string([]))
+        """ writes the JSON string repr of list_objs to a file """
+        if list_objs is not None:
+            list_objs = [objs.to_dictionary() for objs in list_objs]
+        with open("{}.json".format(cls.__name__), "w", encoding="utf-8") as f:
+            f.write(cls.to_json_string(list_objs))
 
     @staticmethod
     def from_json_string(json_string):
-        """ check inputs """
-        if json_string is None:
+        """ returns the list of the JSON string repr json_string """
+        if json_string is None or not json_string:
             return []
-        return json.loads(json_string)
+        return loads(json_string)
 
     @classmethod
     def create(cls, **dictionary):
-        """ check inputs """
-        if cls.__name__ == "Rectangle":
-            dummy = cls(1, 1)
+        """ returns an instance with all attributes already set """
+        from models.rectangle import Rectangle
+        from models.square import Square
+        if cls is Rectangle:
+            new = Rectangle(1, 1)
+        elif cls is Square:
+            new = Square(1)
         else:
-            dummy = cls(1)
-        dummy.update(**dictionary)
-        return dummy
+            new = None
+        new.update(**dictionary)
+        return new
 
     @classmethod
     def load_from_file(cls):
-        """ check inputs """
-        try:
-            with open(cls.__name__ + ".json", encoding="utf-8") as j_file:
-                list_file = cls.from_json_string(j_file.read())
-                return [cls.create(**obj) for obj in list_file]
-
-        except:
+        """ returns a list of instances from a file """
+        from os import path
+        filename = "{}.json".format(cls.__name__)
+        if not path.isfile(filename):
             return []
+        with open(filename, "r",  encoding="utf-8") as f:
+            return [cls.create(**o) for o in cls.from_json_string(f.read())]
 
     @classmethod
     def save_to_file_csv(cls, list_objs):
-        """ check inputs """
-        with open(cls.__name__ + ".csv", mode="w") as f_csv:
-            if list_objs is not None:
-                values = ['id', 'width', 'height', 'size', 'x', 'y']
-                list_dict = [item.to_dictionary() for item in list_objs]
-                values_header = filter(lambda y: y in list_dict[0], values)
-                writer = csv.DictWriter(f_csv, fieldnames=list(values_header))
-                writer.writeheader()
-                for line in list_dict:
-                    writer.writerow(line)
+        """ serilizes object to csv file"""
+        from models.rectangle import Rectangle
+        from models.square import Square
+        if list_objs is not None:
+            if cls is Rectangle:
+                list_objs = [[o.id, o.width, o.height, o.x, o.y]
+                             for o in list_objs]
+            else:
+                list_objs = [[o.id, o.size, o.x, o.y]
+                             for o in list_objs]
+        with open("{}.csv".format(cls.__name__), "w", newline="",
+                  encoding="utf-8") as f:
+            wr = csv.writer(f)
+            wr.writerows(list_objs)
 
     @classmethod
     def load_from_file_csv(cls):
-        """ check inputs """
-        try:
-            with open(cls.__name__ + ".csv") as j_file:
-                reader = csv.DictReader(j_file)
-                list_dicts = []
-                for row in reader:
-                    for keys in row:
-                        row[keys] = int(row[keys])
-                    list_dicts.append(row)
-                list_objs = [cls.create(**obj) for obj in list_dicts]
-                return list_objs
-
-        except IOError:
-            return []
+        """ deserilizes object frm csv file """
+        from models.rectangle import Rectangle
+        from models.square import Square
+        list_objs = []
+        with open("{}.csv".format(cls.__name__), "r", newline="",
+                  encoding="utf-8") as f:
+            rd = csv.reader(f)
+            for row in rd:
+                row = [int(objs) for objs in row]
+                if cls is Rectangle:
+                    objs = {"id": row[0], "width": row[1], "height": row[2],
+                            "x": row[3], "y": row[4]}
+                else:
+                    objs = {"id": row[0], "size": row[1], "x": row[2],
+                            "y": row[3]}
+                list_objs.append(cls.create(**objs))
+        return list_objs
 
     @staticmethod
     def draw(list_rectangles, list_squares):
-        """ check inputs """
-        win = turtle.Screen()
-        win.bgcolor("lightgreen")
-        cursor = turtle.Turtle()
-        win.colormode(255)
-        cursor.pensize(3)
-
-        for shape in list_rectangles:
-            colors = (random.randint(1, 255), random.randint(1, 255),
-                      random.randint(1, 255))
-            cursor.pencolor(colors)
-            cursor.up()
-            cursor.setx(shape.x)
-            cursor.sety(shape.y)
-            cursor.down()
+        ''' turtle graphics draws all the Rectangles and Squares '''
+        import turtle
+        import time
+        from random import randrange
+        turtle.Screen().colormode(255)
+        for item in list_rectangles + list_squares:
+            img = turtle.Turtle()
+            img.color((randrange(255), randrange(255), randrange(255)))
+            img.pensize(1)
+            img.penup()
+            img.pendown()
+            img.setpos((item.x + img.pos()[0], item.y - img.pos()[1]))
+            img.pensize(10)
             for i in range(2):
-                cursor.forward(shape.width)
-                cursor.right(90)
-                cursor.forward(shape.height)
-                cursor.right(90)
-
-        for shape in list_squares:
-            colors = (random.randint(1, 255), random.randint(1, 255),
-                      random.randint(1, 255))
-            cursor.pencolor(colors)
-            cursor.up()
-            cursor.setx(shape.x)
-            cursor.sety(shape.y)
-            cursor.down()
-            for i in range(4):
-                cursor.forward(shape.size)
-                cursor.right(90)
-
-        win.exitonclick()
+                img.forward(item.width)
+                img.left(90)
+                img.forward(item.height)
+                img.left(90)
+            img.end_fill()
+        time.sleep(5)
